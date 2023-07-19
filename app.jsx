@@ -334,12 +334,7 @@ function Main() {
     </main>;
 }
 
-setTimeout(() => {
+document.addEventListener('DOMContentLoaded', () => {
     const root = ReactDOM.createRoot(document.getElementById('app'));
-    root.render(
-        <>
-            <Header />
-            <Main />
-        </>
-    );
-}, 100);
+    root.render(<><Header /><Main /></>);
+});
