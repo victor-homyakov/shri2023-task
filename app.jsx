@@ -32,18 +32,7 @@ function Header() {
 }
 
 function Event(props) {
-    const ref = React.useRef();
-    const { onSize } = props;
-
-    React.useEffect(() => {
-        if (onSize) {
-            const width = ref.current.offsetWidth;
-            const height = ref.current.offsetHeight;
-            onSize({ width, height });
-        }
-    });
-
-    return <li ref={ref} className={'event' + (props.slim ? ' event_slim' : '')}>
+    return <li className={'event' + (props.slim ? ' event_slim' : '')}>
         <button className="event__button">
             <span className={`event__icon event__icon_${props.icon}`} role="img" aria-label={props.iconLabel}></span>
             <h4 className="event__title">{props.title}</h4>
@@ -180,21 +169,16 @@ function Main() {
         setActiveTab(event.target.value);
     };
 
-    const sizes = [];
-    const onSize = size => {
-        sizes.push(size);
-    };
-
     React.useEffect(() => {
-        const sumWidth = sizes.reduce((acc, item) => acc + item.width, 0);
-        const newHasRightScroll = sumWidth > ref.current.offsetWidth;
+        const scroller = ref.current.querySelector('.section__panel_visible');
+        const newHasRightScroll = scroller.scrollWidth > ref.current.offsetWidth;
         if (newHasRightScroll !== hasRightScroll) {
             setHasRightScroll(newHasRightScroll);
         }
     });
 
     const onArrowCLick = () => {
-        const scroller = ref.current.querySelector('.section__panel:not(.section__panel_hidden)');
+        const scroller = ref.current.querySelector('.section__panel_visible');
         if (scroller) {
             scroller.scrollTo({
                 left: scroller.scrollLeft + 400,
@@ -328,9 +312,16 @@ function Main() {
 
             <div className="section__panel-wrapper" ref={ref}>
                 {TABS_KEYS.map(key =>
-                    <div key={key} role="tabpanel" className={'section__panel' + (key === activeTab ? '' : ' section__panel_hidden')} aria-hidden={key === activeTab ? 'false' : 'true'} id={`panel_${key}`} aria-labelledby={`tab_${key}`}>
+                    <div
+                        key={key}
+                        role="tabpanel"
+                        className={'section__panel' + (key === activeTab ? ' section__panel_visible' : ' section__panel_hidden')}
+                        aria-hidden={key === activeTab ? 'false' : 'true'}
+                        id={`panel_${key}`}
+                        aria-labelledby={`tab_${key}`}
+                    >
                         <ul className="section__panel-list">
-                            {TABS[key].items.map((item, index) => <Event key={index}{...item} onSize={onSize} />)}
+                            {TABS[key].items.map((item, index) => <Event key={index}{...item} />)}
                         </ul>
                     </div>
                 )}
