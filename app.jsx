@@ -1,6 +1,6 @@
 function Header() {
-    let [expanded, setExpanded] = React.useState(false);
-    let [toggled, setToggled] = React.useState(false);
+    const [expanded, setExpanded] = React.useState(false);
+    const [toggled, setToggled] = React.useState(false);
 
     const onClick = () => {
         if (!toggled) {
@@ -13,9 +13,9 @@ function Header() {
     return <header className="header">
         <a href="/" className="header__logo" aria-label="Яндекс.Дом"></a>
         <button className="header__menu" aria-expanded={expanded ? 'true' : 'false'} onClick={onClick}>
-                <span className="header__menu-text a11y-hidden">
-                    {expanded ? 'Закрыть меню' : 'Открыть меню'}
-                </span>
+            <span className="header__menu-text a11y-hidden">
+                {expanded ? 'Закрыть меню' : 'Открыть меню'}
+            </span>
         </button>
         <ul className={'header__links' + (expanded ? ' header__links_opened' : '') + (toggled ? ' header__links-toggled' : '')}>
             <li className="header__item">
@@ -33,13 +33,12 @@ function Header() {
 
 function Event(props) {
     const ref = React.useRef();
-
     const { onSize } = props;
 
     React.useEffect(() => {
-        const width = ref.current.offsetWidth;
-        const height = ref.current.offsetHeight;
         if (onSize) {
+            const width = ref.current.offsetWidth;
+            const height = ref.current.offsetHeight;
             onSize({ width, height });
         }
     });
@@ -163,36 +162,31 @@ const TABS = {
     }
 };
 for (let i = 0; i < 6; ++i) {
-    TABS.all.items = [...TABS.all.items, ...TABS.all.items];
+    TABS.all.items = TABS.all.items.concat(TABS.all.items);
 }
 const TABS_KEYS = Object.keys(TABS);
 
+function getDefaultActiveTab() {
+    return new URLSearchParams(location.search).get('tab') || 'all';
+}
+
 function Main() {
     const ref = React.useRef();
-    const initedRef = React.useRef(false);
-    const [activeTab, setActiveTab] = React.useState('');
+    const [activeTab, setActiveTab] = React.useState(getDefaultActiveTab);
+    // console.log('Render Main', activeTab);
     const [hasRightScroll, setHasRightScroll] = React.useState(false);
-
-    React.useEffect(() => {
-        if (!activeTab && !initedRef.current) {
-            initedRef.current = true;
-            setActiveTab(new URLSearchParams(location.search).get('tab') || 'all');
-        }
-    });
 
     const onSelectInput = event => {
         setActiveTab(event.target.value);
     };
 
-    let sizes = [];
+    const sizes = [];
     const onSize = size => {
-        sizes = [...sizes, size];
+        sizes.push(size);
     };
 
     React.useEffect(() => {
         const sumWidth = sizes.reduce((acc, item) => acc + item.width, 0);
-        const sumHeight = sizes.reduce((acc, item) => acc + item.height, 0);
-
         const newHasRightScroll = sumWidth > ref.current.offsetWidth;
         if (newHasRightScroll !== hasRightScroll) {
             setHasRightScroll(newHasRightScroll);
@@ -336,19 +330,11 @@ function Main() {
                 {TABS_KEYS.map(key =>
                     <div key={key} role="tabpanel" className={'section__panel' + (key === activeTab ? '' : ' section__panel_hidden')} aria-hidden={key === activeTab ? 'false' : 'true'} id={`panel_${key}`} aria-labelledby={`tab_${key}`}>
                         <ul className="section__panel-list">
-                            {TABS[key].items.map((item, index) =>
-                                <Event
-                                    key={index}
-                                    {...item}
-                                    onSize={onSize}
-                                />
-                            )}
+                            {TABS[key].items.map((item, index) => <Event key={index}{...item} onSize={onSize} />)}
                         </ul>
                     </div>
                 )}
-                {hasRightScroll &&
-                    <div className="section__arrow" onClick={onArrowCLick}></div>
-                }
+                {hasRightScroll && <div className="section__arrow" onClick={onArrowCLick}></div>}
             </div>
         </section>
     </main>;
