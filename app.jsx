@@ -162,8 +162,11 @@ function getDefaultActiveTab() {
 function Main() {
     const ref = React.useRef();
     const [activeTab, setActiveTab] = React.useState(getDefaultActiveTab);
-    // console.log('Render Main', activeTab);
-    const [hasRightScroll, setHasRightScroll] = React.useState(false);
+    const [hasRightScroll, setHasRightScroll] = React.useState(() => {
+        const ITEM_WIDTH_PX = 200;
+        return TABS[activeTab].items.length * ITEM_WIDTH_PX > window.innerWidth;
+    });
+    // console.log('Render Main', ref, activeTab, hasRightScroll);
 
     const onSelectInput = event => {
         setActiveTab(event.target.value);
