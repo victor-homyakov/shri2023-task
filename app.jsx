@@ -337,4 +337,8 @@ function Main() {
 document.addEventListener('DOMContentLoaded', () => {
     const root = ReactDOM.createRoot(document.getElementById('app'));
     root.render(<><Header /><Main /></>);
+    setTimeout(() => {
+        const footer = document.querySelector('.footer_hidden');
+        footer.classList.remove('footer_hidden');
+    }, 0);
 });

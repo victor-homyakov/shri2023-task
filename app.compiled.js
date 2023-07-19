@@ -329,4 +329,8 @@ function Main() {
 document.addEventListener('DOMContentLoaded', () => {
   const root = ReactDOM.createRoot(document.getElementById('app'));
   root.render( /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Header, null), /*#__PURE__*/React.createElement(Main, null)));
+  setTimeout(() => {
+    const footer = document.querySelector('.footer_hidden');
+    footer.classList.remove('footer_hidden');
+  }, 0);
 });
